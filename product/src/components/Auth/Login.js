@@ -1,24 +1,29 @@
 import React, { useState } from 'react';
-import usersData from './credentials.json';
+// import usersData from './credentials.json';
 import { useNavigate } from 'react-router-dom';
+import Axios from 'axios';
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
-    const handleLogin = async (e) => {
+    const handleLogin = (e) => {
         e.preventDefault();
 
-        console.log("entered login", usersData.users, username, password);
-        const user = usersData.users.find((user) => user.username === username && user.password === password);
-        if (user) {
-            const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
-            localStorage.setItem('token', token);
-            navigate('/home');
-        } else {
-            alert("Invalid username or password");
-        }
+        Axios.post('http://localhost:3000/api/login', {
+            username,
+            password,
+        })
+            .then((response) => {
+                console.log('Login successful:', response.data);
+                localStorage.setItem('token', response.data.token);
+                navigate('/home');
+            })
+            .catch((error) => {
+                console.error('Login error:', error);
+                alert(error);
+            });
     };
 
     return (

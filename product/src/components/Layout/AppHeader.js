@@ -12,6 +12,7 @@ const AppHeader = () => {
 
     const handleLogout = () => {
         setIsOpen(false);
+        console.log('localstorage', localStorage.getItem('token'));
         localStorage.removeItem('token');
         navigate('/login');
     };
