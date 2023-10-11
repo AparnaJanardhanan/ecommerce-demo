@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-// import usersData from './credentials.json';
 import { useNavigate } from 'react-router-dom';
 import Axios from 'axios';
 
@@ -37,26 +36,22 @@ const Login = () => {
                                 type="text"
                                 name="username"
                                 value={username}
+                                placeholder="Username"
                                 onChange={(e) => setUsername(e.target.value)}
                                 required
                                 className="w-full px-3 py-2 placeholder-gray-500 text-gray-900 border-b-2 border-gray-900 focus:outline-none focus:border-red-500"
                             />
-                            <label className="absolute top-0 left-0 px-3 py-2 text-gray-900 transition-transform transform -translate-y-2 scale-75">
-                                Username
-                            </label>
                         </div>
                         <div className="relative mb-8">
                             <input
                                 type="password"
                                 name="password"
                                 value={password}
+                                placeholder="Password"
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                                 className="w-full px-3 py-2 placeholder-gray-500 text-gray-900 border-b-2 border-gray-900 focus:outline-none focus:border-red-500"
                             />
-                            <label className="absolute top-0 left-0 px-3 py-2 text-gray-900 transition-transform transform -translate-y-2 scale-75">
-                                Password
-                            </label>
                         </div>
                         <div className="relative pl-11">
                             <button

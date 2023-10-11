@@ -10,11 +10,9 @@ const DIsplayItem = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
-
-    const dispatch = useDispatch();
     const [selectedComponent, setSelectedComponent] = useState(null);
-    const [searchValue, setSearchValue] = useState(null);
-    const [productData, setProductData] = useState();
+    const [searchValue, setSearchValue] = useState(false);
+    const dispatch = useDispatch();
 
     const openModal = (selected) => {
         setSelectedComponent(selected);
@@ -31,40 +29,13 @@ const DIsplayItem = () => {
 
     const handleFilterChange = (filteredProducts) => {
         console.log("filteredProducts", filteredProducts);
-        setSearchValue(filteredProducts);
-    };
-
-    const handleSearch = () => {
-        const filteredProducts = Object.keys(productData)
-            .flatMap(category =>
-                productData[category].filter(product =>
-                    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    product.desc.toLowerCase().includes(searchQuery.toLowerCase())
-                )
-            );
-        handleFilterChange(filteredProducts);
-    };
-
-    const handleFilter = () => {
-        const filteredProducts = Object.keys(productData)
-            .flatMap(category =>
-                productData[category].filter(product => {
-                    const price = parseFloat(product.price);
-                    return (
-                        (!minPrice || price >= minPrice) &&
-                        (!maxPrice || price <= maxPrice)
-                    );
-                })
-            );
-        handleFilterChange(filteredProducts);
+        setSearchValue(true);
     };
 
     useEffect(() => {
         Axios.get('http://localhost:3000/api/product-list')
             .then((response) => {
                 const productDataSet = response.data;
-                console.log("productDataSet", productDataSet);
-                setProductData(productDataSet);
                 dispatch(fetchProductsSuccess(productDataSet));
             })
             .catch((error) => {
@@ -74,19 +45,23 @@ const DIsplayItem = () => {
 
     return (
         <>
-            <div className='bg-white px-2 py-2 flex justify-between'>
-                <div className='h-7 pl-2 border-b'>
-                    <input
-                        type="text"
-                        className='h-7 bg-transparent'
-                        placeholder="Search by name..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                    <button onClick={handleSearch}><SearchIcon /></button>
+            <div className='bg-white flex justify-between py-4 px-2'>
+                <div className="flex">
+                    <div className='h-7 pl-2 border'>
+                        <SearchIcon />
+                        <input
+                            type="text"
+                            className='px-2'
+                            placeholder="Search by name..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </div>
+                    <button className="bg-cyan-950 text-white w-24" onClick={handleFilterChange}>Search</button>
                 </div>
-                <div className="border-b pr-2">
-                    {/* <select
+                <div className="flex">
+                    <div className="border pr-2">
+                        {/* <select
                         value={selectedCategory}
                         onChange={(e) => setSelectedCategory(e.target.value)}
                     >
@@ -94,26 +69,28 @@ const DIsplayItem = () => {
                         <option value="sofa">Sofa</option>
                         <option value="bed">Bed</option>
                     </select> */}
-                    <input
-                        type="number"
-                        placeholder="Min Price"
-                        className="w-24 px-2 bg-transparent"
-                        value={minPrice}
-                        onChange={(e) => setMinPrice(e.target.value)}
-                    />
-                    <input
-                        type="number"
-                        placeholder="Max Price"
-                        className="w-24 px-2 bg-transparent"
-                        value={maxPrice}
-                        onChange={(e) => setMaxPrice(e.target.value)}
-                    />
-                    <button onClick={handleFilter}><FilterAltIcon /></button>
+                        <FilterAltIcon />
+                        <input
+                            type="number"
+                            placeholder="Min Price"
+                            className="w-24 px-2"
+                            value={minPrice}
+                            onChange={(e) => setMinPrice(e.target.value)}
+                        />
+                        <input
+                            type="number"
+                            placeholder="Max Price"
+                            className="w-24 px-2"
+                            value={maxPrice}
+                            onChange={(e) => setMaxPrice(e.target.value)}
+                        />
+                    </div>
+                    <button className="bg-cyan-950 text-white w-24" onClick={handleFilterChange}>Filter</button>
                 </div>
             </div>
 
             {selectedComponent || searchValue ? (
-                <ItemCard selectedComponent={selectedComponent} closeSelected={closeModal} searchValue={searchValue} />
+                <ItemCard selectedComponent={selectedComponent} closeSelected={closeModal} searchQuery={searchQuery} minPrice={minPrice} maxPrice={maxPrice} setSearchQuery={setSearchQuery} setMinPrice={setMinPrice} setMaxPrice={setMaxPrice} />
             ) : (
                 <div className="px-32 py-10">
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 rounded-full">
